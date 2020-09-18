@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Задание "Матрица"</title>
+    <title>"Матрица"</title>
 
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
@@ -42,100 +42,112 @@
         color: orchid;
     }
 </style>
-
 <script type="text/babel">
-    let n;	            // Число строк
-    let m;	            // Число колонок
-    let k;	            // Число расставляемых восьмерок
-    let mas = [];       // Матрица
+/**
+ * В матрице размером МхN ячеек расставляется случайным образом К восьмерок (8).
+ * Восьмерки не должны соприкасаться по горизонтали, вертикали, диагонали.
+ * Затем в каждую из оставшихся ячеек устанавливается число соседних с нее ячеек, содержащих восьмерки.
+ * Результирующая матрица выводится на єкран
+ */
+const PrintR = (props) => {               // Генерация иображения строки матрицы
+    const row = props.mas[props.ind]      // Массив со строкой матрицы
+    return (
+        <tr>
+            {row.map((value) => {return <td><span className={"n" + String(value)}>{value}</span></td>})}
+        </tr>
+    )
+}
 
-    function PrintR(props) {                // Генерация иображения строки матрицы
-		const elements = mas[props.ind];    // Массив со строкой матрицы
-        let items = [];                     // Массив с HTML-кодом строки
+const PrintM = (props) => {               // Генерация изображения матрицы
+    return (
+        <table>
+            {props.mas.map((value,index) => {return <PrintR mas={props.mas} ind={index} />})}
+        </table>
+    )
+}
 
-        for (let [index, value] of elements.entries()) {
-           items.push(<td key={index}><span className={"n" + String(value)}>{value}</span></td>)    // Изображение ячейки матрицы
+class Matrix extends React.Component {
+    state = {
+        matrix: []         // Матрица
+    }
+
+    setMatrix = () => {               // Заполнение матрицы и вывод ее на экран
+        const n = document.getElementById("n").value       // Число строк
+        const m = document.getElementById("m").value       // Число колонок
+        const k = document.getElementById("k").value       // Число расставляемых восьмерок
+        let mas = []                                       // рабочая матрица
+
+        function setOne(i, j) {        // Добавление "1" в ячейку рядом с "8"
+            if (((i < 0) || (i >= n)) || ((j < 0) || (j >= m))) return         // Выход за границы матрицы
+            if (mas[i][j] !== 8)  mas[i][j] += 1
         }
-        return (
-            <tr>{items}</tr>
-        )
-    }
-
-    function PrintM(title) {                // Генерация изображения матрицы
-        return (
-            <table>
-                {mas.map((value,index) => {return <PrintR key={index} ind={index} />})}
-            </table>
-        )
-    }
-
-    function setOne(i, j) {			        // Добавление "1" в ячейку рядом с "8"
-        if (((i < 0) || (i >= n)) || ((j < 0) || (j >= m))) return;         // Выход за границы матрицы
-        if (mas[i][j] != 8)  mas[i][j] += 1;
-    }
-
-    function setMatrix() {                 // Заполнение матрицы и вывод ее на экран
-        n = document.getElementById("n").value;
-        m = document.getElementById("m").value;
-        k = document.getElementById("k").value;
 
         // 1) Заполнение матрицы нулями
         for (let i = 0; i < n; i++) {
-            mas[i] = [];
+            mas[i] = []
             for (let j = 0; j < m; j++) {
-                mas[i][j] = 0;
+                mas[i][j] = 0
             }
         }
 
         // 2) Расстановка в матрице случайным образом К восьмерок.
-        //    Восьмерки не должны соприкасаться по горизонтали, вертикали, диагонали
-        let l = 0;		    // Число расставленных восьмерок
-        let c = 0;		    // Счетчи циклов расстановки восмерок (защита от зацикливания)
-        const cmax = 1000;  // Для защиты от зацикливания
+        let l = 0		    // Число расставленных восьмерок
+        let c = 0		    // Счетчи циклов расстановки восмерок (защита от зацикливания)
+        const cmax = 1000   // Для защиты от зацикливания
 
         while ((l < k) && (c < cmax)) {
             // Генерация координат случайной ячейки
-            const i = Math.floor(Math.random() * n);
-            const j = Math.floor(Math.random() * m);
+            const i = Math.floor(Math.random() * n)
+            const j = Math.floor(Math.random() * m)
             let s = 0;              // Число соседних восьмерок
             // Обход соседей ячейки с целью проверки на занятость восьмерками
             for (let p = (i-1); p <= (i+1); p++) {
                 for (let q = (j-1); q <= (j+1); q++) {
                     if (((p >= 0) && (p < n)) && ((q >= 0) && (q < m))) {
-                        s += mas[p][q];
+                        s += mas[p][q]
                     }
                 }
             }
-            if (s == 0) {           // Соседей нет
-                mas[i][j] = 8;
-                l++;
+            if (s === 0) {           // Соседей нет
+                mas[i][j] = 8        // Установка восьмерки
+                l++
             }
-            c++;
+            c++
         }
 
         // 3) Обкладывание восьмерок в матрице единичками
         for (let i = 0; i < n; i++)
             for (let j = 0; j < m; j++)
-                if (mas[i][j] == 8)
+                if (mas[i][j] === 8)
                     for (let p = i - 1; p <= i + 1; p++)
                         for (let q = j - 1; q <= j + 1; q++)
-                            setOne(p, q);   // Добавление "1" в ячейку рядом с "8"
+                            setOne(p, q)    // Добавление "1" в ячейку рядом с "8"
 
-        // Вывод результирующей матрицы на экран
-        ReactDOM.render(<PrintM />, document.getElementById("matrix"));
+        this.setState({matrix: mas})        // Изменение состояния матрицы
     }
+
+    render() {
+        return (
+            <div>
+                <div id="form">
+                    <h3>Параметры матрицы</h3>
+                    n:<input type="number" id="n" min="1" max="10"  defaultValue="5" />
+                    m:<input type="number" id="m" min="1" max="15"  defaultValue="8" />
+                    k:<input type="number" id="k" min="1" max="100" defaultValue="9" />
+                    <input type="button" value="Вывести матрицу" onClick={this.setMatrix} />
+                </div>
+                <hr/>
+                <PrintM mas={this.state.matrix} />
+            </div>
+        )
+    }
+}
+
+ReactDOM.render(<Matrix />, document.getElementById("matrix"))
+
 </script>
 </head>
 <body>
-    <div id="form">
-        <h3>Параметры матрицы</h3>
-        n:<input type="number" id="n" min="1" max="10"  value="5">
-        m:<input type="number" id="m" min="1" max="15"  value="8">
-        k:<input type="number" id="k" min="1" max="100" value="9">
-        <input type="button" value="Вывести матрицу" onclick="setMatrix()">
-    </div>
-    <hr>
     <div id="matrix"></div>
 </body>
 </html>
-
