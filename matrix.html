@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>"Матрица"</title>
-
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
@@ -50,10 +49,9 @@
  * Результирующая матрица выводится на єкран
  */
 const PrintR = (props) => {               // Генерация иображения строки матрицы
-    const row = props.mas[props.ind]      // Массив со строкой матрицы
     return (
         <tr>
-            {row.map((value) => {return <td><span className={"n" + String(value)}>{value}</span></td>})}
+            {props.row.map((value) => {return <td><span className={"n" + String(value)}>{value}</span></td>})}
         </tr>
     )
 }
@@ -61,7 +59,7 @@ const PrintR = (props) => {               // Генерация иображен
 const PrintM = (props) => {               // Генерация изображения матрицы
     return (
         <table>
-            {props.mas.map((value,index) => {return <PrintR mas={props.mas} ind={index} />})}
+            {props.mas.map((value) => {return <PrintR row={value} />})}
         </table>
     )
 }
@@ -71,7 +69,7 @@ class Matrix extends React.Component {
         matrix: []         // Матрица
     }
 
-    setMatrix = () => {               // Заполнение матрицы и вывод ее на экран
+    setMatrix = () => {                // Заполнение матрицы и вывод ее на экран
         const n = document.getElementById("n").value       // Число строк
         const m = document.getElementById("m").value       // Число колонок
         const k = document.getElementById("k").value       // Число расставляемых восьмерок
