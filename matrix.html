@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>"Матрица"</title>
+    <title>"Matrix"</title>
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
@@ -43,12 +43,12 @@
 </style>
 <script type="text/babel">
 /**
- * В матрице размером МхN ячеек расставляется случайным образом К восьмерок (8).
- * Восьмерки не должны соприкасаться по горизонтали, вертикали, диагонали.
- * Затем в каждую из оставшихся ячеек устанавливается число соседних с нее ячеек, содержащих восьмерки.
- * Результирующая матрица выводится на єкран
+ * There is the matrix in size MxN. K of eights (8) is randomly installed in it.
+ * The eights should not touch horizontally, vertically, diagonally.
+ * Then the number of neighbor eights (horizontally, vertically, diagonally) is set in each cell.
+ * The resulting matrix is displayed on the screen.
  */
-const PrintR = (props) => {               // Генерация иображения строки матрицы
+const PrintR = (props) => {               // Matrix row image generation
     return (
         <tr>
             {props.row.map((value) => {return <td><span className={"n" + String(value)}>{value}</span></td>})}
@@ -56,7 +56,7 @@ const PrintR = (props) => {               // Генерация иображен
     )
 }
 
-const PrintM = (props) => {               // Генерация изображения матрицы
+const PrintM = (props) => {               // Matrix image generation
     return (
         <table>
             {props.mas.map((value) => {return <PrintR row={value} />})}
@@ -66,21 +66,21 @@ const PrintM = (props) => {               // Генерация изображе
 
 class Matrix extends React.Component {
     state = {
-        matrix: []         // Матрица
+        matrix: []         // Matrix
     }
 
-    setMatrix = () => {                // Заполнение матрицы и вывод ее на экран
-        const n = document.getElementById("n").value       // Число строк
-        const m = document.getElementById("m").value       // Число колонок
-        const k = document.getElementById("k").value       // Число расставляемых восьмерок
-        let mas = []                                       // рабочая матрица
+    setMatrix = () => {                // Filling the matrix and displaying it on the screen
+        const n = document.getElementById("n").value       // Number of lines
+        const m = document.getElementById("m").value       // Number of columns
+        const k = document.getElementById("k").value       // Number of placing eights
+        let mas = []                                       // Matrix
 
-        function setOne(i, j) {        // Добавление "1" в ячейку рядом с "8"
-            if (((i < 0) || (i >= n)) || ((j < 0) || (j >= m))) return         // Выход за границы матрицы
+        function setOne(i, j) {        // Adding "1" to the cell next to "8"
+            if (((i < 0) || (i >= n)) || ((j < 0) || (j >= m))) return         // Exceeding the boundaries of the matrix
             if (mas[i][j] !== 8)  mas[i][j] += 1
         }
 
-        // 1) Заполнение матрицы нулями
+        // 1) Filling the matrix with zeros
         for (let i = 0; i < n; i++) {
             mas[i] = []
             for (let j = 0; j < m; j++) {
@@ -88,17 +88,17 @@ class Matrix extends React.Component {
             }
         }
 
-        // 2) Расстановка в матрице случайным образом К восьмерок.
-        let l = 0		    // Число расставленных восьмерок
-        let c = 0		    // Счетчи циклов расстановки восмерок (защита от зацикливания)
-        const cmax = 1000   // Для защиты от зацикливания
+        // 2) Randomly setting K eights in the matrix.
+        let l = 0		    // The number of placed eights
+        let c = 0		    // Cycle counter (for loop protection)
+        const cmax = 1000   // Maximum cycle number (for loop protection)
 
         while ((l < k) && (c < cmax)) {
-            // Генерация координат случайной ячейки
+            // Generating random cell coordinates
             const i = Math.floor(Math.random() * n)
             const j = Math.floor(Math.random() * m)
-            let s = 0;              // Число соседних восьмерок
-            // Обход соседей ячейки с целью проверки на занятость восьмерками
+            let s = 0;              // Number of neighboring eights
+            // Checking сell neighbors for occupancy by eights
             for (let p = (i-1); p <= (i+1); p++) {
                 for (let q = (j-1); q <= (j+1); q++) {
                     if (((p >= 0) && (p < n)) && ((q >= 0) && (q < m))) {
@@ -106,33 +106,33 @@ class Matrix extends React.Component {
                     }
                 }
             }
-            if (s === 0) {           // Соседей нет
-                mas[i][j] = 8        // Установка восьмерки
+            if (s === 0) {           // No neighbors
+                mas[i][j] = 8        // Setting of the eight
                 l++
             }
             c++
         }
 
-        // 3) Обкладывание восьмерок в матрице единичками
+        // 3) Surrounding eights in the matrix with ones ("1")
         for (let i = 0; i < n; i++)
             for (let j = 0; j < m; j++)
                 if (mas[i][j] === 8)
                     for (let p = i - 1; p <= i + 1; p++)
                         for (let q = j - 1; q <= j + 1; q++)
-                            setOne(p, q)    // Добавление "1" в ячейку рядом с "8"
+                            setOne(p, q)    // Adding "1" to the cell next to "8"
 
-        this.setState({matrix: mas})        // Изменение состояния матрицы
+        this.setState({matrix: mas})        // Matrix state change
     }
 
     render() {
         return (
             <div>
                 <div id="form">
-                    <h3>Параметры матрицы</h3>
+                    <h3>Matrix parameters</h3>
                     n:<input type="number" id="n" min="1" max="10"  defaultValue="5" />
                     m:<input type="number" id="m" min="1" max="15"  defaultValue="8" />
                     k:<input type="number" id="k" min="1" max="100" defaultValue="9" />
-                    <input type="button" value="Вывести матрицу" onClick={this.setMatrix} />
+                    <input type="button" value="Display" onClick={this.setMatrix} />
                 </div>
                 <hr/>
                 <PrintM mas={this.state.matrix} />
