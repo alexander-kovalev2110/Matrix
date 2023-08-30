@@ -1,5 +1,5 @@
 # ask "Matrix"
-----------------------------------------------------------
+
 There is the matrix in size MxN.
 K of eights (8) is randomly installed in it.
 The eights should not touch horizontally, vertically, diagonally.
