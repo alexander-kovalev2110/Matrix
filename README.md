@@ -1,4 +1,4 @@
-# ask "Matrix"
+# Matrix
 
 There is the matrix in size MxN.
 K of eights (8) is randomly installed in it.
