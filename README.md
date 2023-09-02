@@ -4,7 +4,7 @@
 
 2. K of eights (8) is randomly installed in it
 
-3. Eights should not touch each other horizontally, vertically, diagonally4 
+3. Eights should not touch each other horizontally, vertically, diagonally 
 
 4. Then the number of neighbor eights (horizontally, vertically, diagonally) is set in each cell
 
